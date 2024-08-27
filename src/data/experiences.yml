@@ -1,0 +1,26 @@
+experiences:
+  - role: DevOps Intern
+    display: true
+    company: Simpl
+    company_url: https://getsimpl.com/
+    company_logo: /assets/images/simpl.png
+    start_date: April 2024
+    end_date: Present
+    location: Bangalore, India
+    points:
+      - Worked on CI/CD pipelines
+      - Automated infrastructure provisioning
+      - Monitored and maintained production systems
+
+  - role: Research Trainee
+    display: true
+    company: Defense Research and Development Organization (DRDO)
+    company_url: https://www.drdo.gov.in/drdo/
+    company_logo: /assets/images/drdo.png
+    start_date: January 2023
+    end_date: July 2023
+    location: New Delhi, India
+    points:
+      - Conducted research on missile systems
+      - Developed software tools for data analysis
+      - Collaborated with a team of scientists

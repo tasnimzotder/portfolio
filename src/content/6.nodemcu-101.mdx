@@ -1,0 +1,181 @@
+---
+id: 6
+title: NodeMCU 101 - Things You Need to Know
+seoTitle: NodeMCU 101 - Things You Need to Know
+abstract: NodeMCU is an open-source microcontroller that is used to build a variety of applications. NodeMCU has a WiFi module that can be used to connect to a network.
+isPublished: true
+publishedOn: 2022-02-05T00:00:00+0530
+layout: Article
+cover: "6/6-cover.webp"
+tags:
+  - IoT
+  - 101
+---
+
+## About NodeMCU
+
+NodeMCU is an open-source platform that enables users to create IoT applications. NodeMCU devices are based on the ESP8266 chip, which includes a WiFi module that can be used to connect to a network. NodeMCU devices are popular because they are easy to use and have a low cost.
+
+## Applications of NodeMCU
+
+1. IoT applications
+2. Home automation
+3. Robotics
+4. Wearable technology
+5. Smart cars
+6. Smart cities
+7. Remote monitoring
+
+## Types of NodeMCU
+
+There are two types of NodeMCU boards:
+
+    1. NodeMCU v0.9
+    2. NodeMCU v1.0
+
+|       Type       | Color | Chipset | Pins |
+| :--------------: | :---: | :-----: | :--: |
+| **NodeMCU v0.9** | Blue  | ESP-12  |  16  |
+| **NodeMCU v1.0** | Green | ESP-12E |  22  |
+
+## Hardware of NodeMCU
+
+### Specifications of NodeMCU
+
+> NodeMCU is a 32-bit microcontroller.
+
+| Field                   | Value                                  |
+| ----------------------- | -------------------------------------- |
+| Microcontroller         | Tensilica 32-bit RISC CPU Xtensa LX106 |
+| Input voltage           | 7-12V                                  |
+| Operating voltage       | 3.3V                                   |
+| Flash memory            | 4MB                                    |
+| SRAM                    | 64KB                                   |
+| Clock Speed             | 80MHz                                  |
+| GPIO Pins               | 16                                     |
+| Analog Input (ADC) Pins | 1 (10-bit)                             |
+| UART Pins               | 1                                      |
+| SPI Pins                | 1                                      |
+| I2C Pins                | 1                                      |
+
+### Components 0f NodeMCU
+
+The main components of NodeMCU are:
+
+- ESP-12E chip
+- 2.4 GHz antenna
+- Micro USB connector
+- 3.3V LDO voltage regulator
+- Reset button
+- Flash button
+- USB to TTL converter (CP2102)
+
+## Software Specifications of NodeMCU
+
+| Field                      | Value                                                         |
+| -------------------------- | ------------------------------------------------------------- |
+| Programming Languages Used | Lua, C++ Toolchain, Micropython, Arduino Programming Language |
+| Popular IDEs               | Arduino IDE, PlatformIO, VS Code                              |
+
+A sample of blinking LED in NodeMCU is shown below in multiple languages:
+
+**Lua**: Programming in Lua for NodeMCU is like Node.js. Lua is asynchronous and event driven.
+
+```lua title="main.lua"
+-- LED blink --
+
+local pin = 4 -- D4
+local delay = 500 -- 500 ms
+local status = gpio.LOW
+
+-- initializa pin --
+gpio.mode(pin, gpio.OUTPUT)
+gpio.write(pin, status)
+
+-- led blink --
+tmr.alarm(0, delay, 1, function ()
+if status == gpio.LOW then
+status = gpio.HIGH
+else
+status = gpio.LOW
+end
+
+    gpio.write(pin, status)
+
+end)
+```
+
+**Micropython**: Micropython is a software implementation of **Python3**. It's written on **C** and optimized to run on a microcontroller.
+
+```python title="main.py"
+import mchine
+import time
+
+pin = 4
+led = machine.Pin(4, machine.Pin.OUT)
+
+while True:
+led.high()
+time.sleed(0.5)
+led.low()
+time.sleep(0.5)
+```
+
+**.ino**: Arduino Programming Language: It's similar to **C++**.
+
+```cpp title="main.ino"
+const int LED_PIN = 4;
+const int LED_DELAY = 500;  // 500ms
+
+void setup() {
+pinMode(LED_PIN, OUTPUT);
+}
+
+void loop() {
+digitalWrite(LED_PIN, 1);
+delay(LED_DELAY);
+digitalWrite(LED_PIN, 0);
+delay(LED_DELAY);
+}
+```
+
+## NodeMCU Setup (in Arduino IDE)
+
+Arduino IDE is an open-source IDE developed by Arduino. The Arduino IDE can be used to write programs for lots of microcontrollers including Arduino Boards, ESP8266, ESP32, Adafruit Boards, and Pi Pico Boards.
+
+The setup process of Arduino IDE for NodeMCU is described in the following article 👉 [How to Setup Arduino IDE for NodeMCU?](https://tasnimzotder.com/posts/how-to-set-up-arduino-ide-for-nodemcu).
+
+## Comparison Between NodeMCU and Arduino UNO
+
+Although both NodeMCU and Arduino UNO can be used in IoT development, they have lots of differences. Some of their similarities and differences are as following:
+
+### Similarities between NodeMCU and Arduino UNO
+
+There are a few similarities between the NodeMCU and Arduino Uno. Both boards use a microcontroller, which is a programmable chip that can be used to control electronic devices. They also both use the Arduino IDE (Integrated Development Environment) for programming. The Arduino Uno has a few more capabilities than the NodeMCU, such as the ability to use shields, which are add-on boards that can provide additional functions, such as motor control or wireless communication. The Arduino Uno also has more input and output pins than the NodeMCU.
+
+### Differences between NodeMCU and Arduino UNO
+
+| Field                   | NodeMCU      | Arduino UNO  |
+| ----------------------- | ------------ | ------------ |
+| Creator                 | Espressif    | Arduino      |
+| Microcontroller         | ESP8266      | ATmega328p   |
+| Processor               | 32-bit       | 8-bit        |
+| Processor Speed         | 80MHz        | 16MHz        |
+| SRAM                    | 64KB         | 2KB          |
+| Flash Memory            | 4MB          | 32KB         |
+| Input Voltage           | 7-12V        | 7-12V        |
+| Operating Voltage       | 3.3V         | 5V           |
+| GPIO Pins               | 16           | 14           |
+| PWM Pins                | 4            | 6            |
+| Analog Input (ADC) Pins | 1            | 1            |
+| Wireless Communication  | ESP8266 SoC  | None         |
+| Serial Communication    | UART/I2C/SPI | UART/I2C/SPI |
+
+## References
+
+- "NodeMCU - Wikipedia" En, [https://en.wikipedia.org/wiki/NodeMCU](https://en.wikipedia.org/wiki/NodeMCU).
+- "NodeMcu -- An open-source firmware based on ESP8266 wifi-soc." Nodemcu, [https://www.nodemcu.com/index_en.html](https://www.nodemcu.com/index_en.html).
+- "NodeMCU ESP8266 Pinout, Specifications, Features & Datasheet" Components101, 22 Apr. 2020, [https://components101.com/development-boards/nodemcu-esp8266-pinout-features-and-datasheet](https://components101.com/development-boards/nodemcu-esp8266-pinout-features-and-datasheet).
+- "UNO R3 | Arduino Documentation | Arduino Documentation" Docs, [https://docs.arduino.cc/hardware/uno-rev3](https://docs.arduino.cc/hardware/uno-rev3).
+- "MicroPython - Python for microcontrollers" Micropython, [https://micropython.org/](https://micropython.org/).
+- "NodeMCU Documentation" Nodemcu, [https://nodemcu.readthedocs.io/en/release/](https://nodemcu.readthedocs.io/en/release/).

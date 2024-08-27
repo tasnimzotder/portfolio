@@ -1,0 +1,108 @@
+---
+id: 20
+title: Animating the Terminal - Bringing Images to Life with ASCII Art in Go
+abstract: Explore the art of terminal animations with Go as we transform GIFs into ASCII art. This article covers the technical journey from image processing to character mapping, with a focus on the luminosity method for grayscale conversion. Dive into the code, available on GitHub, and learn how to animate your terminal with the timeless charm of ASCII characters.
+isPublished: true
+publishedOn: 2023-12-19T00:16:00+0530
+layout: Article
+tags:
+  - Cloud
+---
+
+![Demo](/assets/posts/20/20-demo.webp "Demo")
+
+## Introduction
+
+Terminal is a powerful tool. It is a text based interface to the system. It suuports ASCII characters. Some terminals support UTF-8 characters. Images, videos, animations, etc. are not supported on the terminal. But, we can still visualize animations on the terminal. In this article, we will see how to visualize animations on the terminal using Go programming language. The wrorking code is available on GitHub [tasnimzotder/terminal-dance: Enjoy GIF animations in your terminal](https://github.com/tasnimzotder/terminal-dance)
+
+## Methodology
+
+We will visualize animations on the terminal using ASCII characters. So, our utlimate goal is to convert an image or GIF into ASCII characters. First of all, let's understand what ASCII characters are, then we will dig dive into the implementation.
+
+{/* ### ASCII Characters */}
+
+ASCII stands for American Standard Code for Information Interchange. Now a days, ASCII is a part of Unicode. It occupies the first 128 codes in Unicode (U-00000000 to U-00000007F). ASCII characters are 7-bit characters. ASCII characters are used to represent English characters, numbers, and symbols. Some of the ASCII characters are shown in the table below.
+
+| Character | ASCII Code | Unicode Code |
+| --------- | ---------- | ------------ |
+| A         | 65         | U+0041       |
+| B         | 66         | U+0042       |
+| .         | 46         | U+002E       |
+| @         | 64         | U+0040       |
+| +         | 43         | U+002B       |
+
+{/* ### Implementation */}
+
+Images are stored in the form of pixels, like cells in a matrix. Each pixel has a color. The color of the pixel is represented by a color code. An image can be colored or mono-chromatic. A colored image has three color codes for each pixel, one for red, one for green, and one for blue. A mono-chromatic image has only one color code for each pixel.
+
+Enough of theory, let's see how to implement the idea. First we need to read the image or GIF. In case of GIF, we need to extract the frames. The image sizes can be very large. So, we need to resize the image.
+
+```go
+func resizeFrames(frames []*image.Paletted, width, height int) []*image.Paletted {
+	hScale := float64(height) / float64(frames[0].Bounds().Dy())
+	wScale := float64(width) / float64(frames[0].Bounds().Dx())
+
+	resizedFrames := make([]*image.Paletted, len(frames))
+
+	for i, frame := range frames {
+		newWidth := int(float64(frame.Bounds().Dx()) * wScale)
+		newHeight := int(float64(frame.Bounds().Dy()) * hScale)
+
+		resizedFrames[i] = image.NewPaletted(image.Rect(0, 0, newWidth, newHeight), frame.Palette)
+
+		for x := 0; x < newWidth; x++ {
+			for y := 0; y < newHeight; y++ {
+				resizedFrames[i].Set(x, y, frame.At(int(float64(x)/wScale), int(float64(y)/hScale)))
+			}
+		}
+	}
+
+	return resizedFrames
+}
+```
+
+After reading and resizing the image frames, we need to convert to three color channels into one. There are several methods to convert a color image to grayscale. Some of them are shown below.
+
+1. Luminosity method: $Y = 0.299R + 0.587G + 0.114B$
+2. Average method: $Y = \frac{R + G + B}{3}$
+3. Lightness method: $Y = \frac{max(R, G, B) + min(R, G, B)}{2}$
+4. Decomposition method (Maximum method): $Y = max(R, G, B)$
+
+In this article, we will use the luminosity method.
+
+```go
+func grayscaleChar(color color.Color) int {
+	r, g, b, _ := color.RGBA()
+	val := int(0.299*float64(r)+0.587*float64(g)+0.114*float64(b)) / 256
+
+	return val
+}
+```
+
+Now we have the grayscale image. We need to convert the grayscale image to ASCII characters. We will use a set of ASCII characters to represent the grayscale values. The ASCII characters are arranged in the increasing order of their intensity. The ASCII characters are shown below.
+
+```go
+const CHARS = "   .:-=+*#%@"
+```
+
+Some while spaces are added at the beginning of the string to make the thresholding easier. We will use the following formula to convert the grayscale value to ASCII character.
+
+```go
+colorVal := grayscaleChar(color)
+charIdx := val * (len(CHARS) - 1) / 255
+```
+
+{/* ## Results */}
+
+## Conclusion
+
+In this article, we have seen how to visualize animations on the terminal using ASCII characters. The working code is available on GitHub [tasnimzotder/terminal-dance: Enjoy GIF animations in your terminal](https://github.com/tasnimzotder/terminal-dance)
+
+## Credits
+
+- Giphy. GIPHY - Be animated. GIPHY. https://giphy.com/
+
+## References
+
+- Kilbourne, J. (2003). Unicode, UTF-8, ASCII, and SNOMED CT®. PubMed Central (PMC). https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1480066/
+- Forouzan, B., & Mosharraf, F. (2009). Basics of computer science. Cengage Learning.

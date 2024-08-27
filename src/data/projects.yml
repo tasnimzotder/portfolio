@@ -1,0 +1,32 @@
+projects:
+  - title: tChat
+    abstract: A simple chat application with end-to-end encryption for secure communication with servers
+    start_date: January 2024
+    status: On hold
+    tech_stack:
+      - Go
+      - SQLite
+    github_url: "https://github.com/tasnimzotder/tchat"
+    display: true
+
+  - title: Artificial Life
+    abstract: A simulation of artificial life forms
+    start_date: January 2024
+    status: Ongoing
+    tech_stack:
+      - Go
+      - Ebitengine
+    github_url: "https://github.com/tasnimzotder/artificial-life"
+    display: true
+
+  - title: Tracking Device (xTracker)
+    abstract: A tracking device for school children and elderly people with fall/accident detection and alert system.
+    start_date: August 2024
+    status: Ongoing
+    tech_stack:
+      - Go
+      - MQTT
+      - ESP32
+      - GPS
+      - PostgreSQL
+    display: false

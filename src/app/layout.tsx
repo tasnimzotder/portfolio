@@ -1,8 +1,32 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
+import {
+  Inter,
+  Nanum_Myeongjo,
+  Noto_Serif,
+  Source_Serif_4,
+} from "next/font/google";
+import "./globals.scss";
+// import 'mermaid/dist/mermaid.css';
+import NavBar from "@/components/navbar/navbar";
+import Footer from "@/components/footer/footer";
+import ThemeProvider from "@/components/providers/theme_provider";
 
 const inter = Inter({ subsets: ["latin"] });
+const nanumMyeongjo = Nanum_Myeongjo({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  fallback: ["inter", "sans-serif"],
+});
+const sourceSerif = Source_Serif_4({
+  subsets: ["latin"],
+  weight: ["300", "400", "600", "700"],
+  preload: true,
+});
+const notoSerif = Noto_Serif({
+  subsets: ["latin"],
+  weight: ["200", "300", "400", "700"],
+  preload: true,
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,7 +40,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem={true}
+          disableTransitionOnChange={true}
+        >
+          <NavBar />
+          <div className="mx-auto">{children}</div>
+          <Footer />
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

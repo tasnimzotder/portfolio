@@ -1,0 +1,286 @@
+---
+id: 19
+title: Optimizing Game of Life with Concurrency using Goroutines
+abstract: Optimizing Game of Life with Concurrency using Go. A byte data type is used to represent the state of a cell and the number of live neighbors.
+isPublished: true
+publishedOn: 2023-12-16T15:30:00+0530
+layout: Article
+tags:
+  - Cloud
+---
+
+## Game of Life
+
+Game of life is a cellular automata devised by the British mathematician John Horton Conway in 1970. It is a zero-player game, meaning that its evolution is determined by its initial state, requiring no further input. It is not a game in the conventional sense, there are no winners and losers. The game progresses by some simple rules and the state of the cells at the end of the game is determined by the initial state of the cells.
+
+### Core Logic
+
+The game takes place in a two dimensional grid of cells. Each cell can be in one of the two states, alive or dead (`1` or `0`). The state of the cell in the next generation is determined by the states of the current neighbour cells. The rules are as follows:
+
+```math
+\begin{align}
+    f(c, n) &=
+        \begin{cases}
+            1 &\text{if } c = 1 \land n \in [2, 3] \\
+            1 &\text{if } c = 0 \land n = 3 \\
+            0 &\text{otherwise}
+        \end{cases} \\
+\end{align}
+```
+
+where, $f$ is the function that determines the state of the cell in the next generation, $c$ is the state of the cell in the current generation and $n$ is the number of live neighbours. The symbol $\land$ is the logical AND operator and $[2, 3]$ is the inclusive range from $2$ to $3$.
+
+- Any live cell with fewer than two live neighbours dies, as if by **underpopulation**.
+- Any live cell with two or three live neighbours lives on to the next generation.
+- Any live cell with more than three live neighbours dies, as if by **overpopulation**.
+- Any dead cell with exactly three live neighbours becomes a live cell, as if by **reproduction**.
+- All other dead cells remain dead.
+
+```math
+\begin{align}
+    \def\arraystretch{1.5}
+       \begin{array}{c:c:c}
+       1 & 1 & 0 \\ \hline
+       0 & [1] & 1 \\
+       \hline
+       0 & 0 & 1
+    \end{array} &\to
+    \def\arraystretch{1.5}
+       \begin{array}{c:c:c}
+       1 & 1 & 0 \\ \hline
+       0 & [0] & 1 \\
+       \hline
+       0 & 0 & 1
+    \end{array} \\
+
+    \def\arraystretch{1.5}
+       \begin{array}{c:c:c}
+       1 & 1 & 0 \\ \hline
+       0 & [0] & 1 \\
+       \hline
+       0 & 0 & 0
+    \end{array} &\to
+    \def\arraystretch{1.5}
+       \begin{array}{c:c:c}
+       1 & 1 & 0 \\ \hline
+       0 & [1] & 1 \\
+       \hline
+       0 & 0 & 0
+    \end{array}
+\end{align}
+```
+
+The above example shows the evolution of a cell in the next generation. For now just focus on the cell marked with `[]`. In the equation $(2)$, the live cell has $4$ live neighbours, so it dies by overpopulation. In the equation $(3)$, the dead cell has exactly $3$ live neighbours, so it becomes alive by reproduction.
+
+## Basic Implementation
+
+In the basic implementation, we use a two dimensional array of `bool` to represent the state of the cells. The number of live neighbours is calculated for each cell and the state of the cell is updated accordingly.
+
+Declaring the struct for the game:
+
+```go
+type Game struct {
+    World []bool // current world
+    NextWorld []bool  // next world (temporary)
+    Rows int
+    Cols int
+}
+```
+
+> Note: Here, we don't have to explicitly initialize the `World` and `NextWorld` as pointers. In Go, slides are passed by reference.
+
+The `World` and `NextWorld` are one dimensional arrays of `bool` to represent the current and next state of the cells. These one dimensional arrays are used to represent the two dimensional grid of cells by mapping the two dimensional indices to one dimensional indices. The `Rows` and `Cols` are the number of rows and columns in the world.
+
+The alive neighbours are calculated for each cell using the following function:
+
+```go
+func (g *Game) aliveNeighbours(row, col int) int {
+    alive := 0
+    for i := row - 1; i <= row + 1; i++ {
+        for j := col - 1; j <= col + 1; j++ {
+            if i == row && j == col {
+                continue
+            }
+
+            i = (i + g.Rows) % g.Rows
+            j = (j + g.Cols) % g.Cols
+
+            idx := i * g.Cols + j
+
+            if g.World[idx] {
+                alive++
+            }
+        }
+    }
+    return alive
+}
+```
+
+The `aliveNeighbours` function takes the row and column of the cell as input and returns the number of alive neighbours. The function iterates over the cells in the neighbourhood of the cell and counts the number of alive cells. The `i` and `j` are wrapped around the world to handle the edge cases.
+
+The `NextWorld` is updated using the following function:
+
+```go
+func (g *Game) NextGeneration() {
+    for i := 0; i < g.Rows; i++ {
+        for j := 0; j < g.Cols; j++ {
+            idx := i * g.Cols + j
+            alive := g.aliveNeighbours(i, j)
+
+            if g.World[idx] {
+                if alive < 2 || alive > 3 {
+                    g.NextWorld[idx] = false
+                } else {
+                    g.NextWorld[idx] = true
+                }
+            } else {
+                if alive == 3 {
+                    g.NextWorld[idx] = true
+                } else {
+                    g.NextWorld[idx] = false
+                }
+            }
+        }
+    }
+
+    copy(g.World, g.NextWorld)
+}
+```
+
+The `updateWorld` function iterates over the cells in the world and updates the `NextWorld` based on the number of alive neighbours. The `NextWorld` is then copied to the `World` to update the state of the world.
+
+## Optimizing with A Byte Data Type to Represent a Cell
+
+Now, if we look at the rules of the game, we can see that the state of the cell is either alive or dead, which is a single bit data. A cell can have a maximum of 8 neighbours, a 4 bit data. So, to represent the cell state and the number of alive neighbours, a total of 5 bits ($5 = 1 + 4$) are required. But, there is no 5 bit data type (specially in Go). So, we use a byte (8-bit) data type to represent the state of the cell and the number of live neighbours.
+
+The `Game` struct is updated to use a one dimensional array of `byte` to represent the world:
+
+```go
+type Game struct {
+    World []byte // current world
+    NextWorld []byte  // next world (temporary)
+    Rows int
+    Cols int
+}
+```
+
+To store the state of cell we use the following bit operations for the `LSB`:
+
+```go
+g.World[idx] |= 0x01 // or 0b00000001, set LSB to 1
+g.World[idx] &= 0xFE // or 0b11111110, set LSB to 0
+```
+
+To store the number of alive neighbours, we iterate over the neighbours and set the bits accordingly:
+
+```go
+if true { // if the current cell is alive
+    g.World[idx] += byte(0x02)
+} else { // if the current cell is dead
+    g.World[idx] -= byte(0x02)
+}
+```
+
+As the first bit from the `LSB` is used to represent the state of the cell, the number of alive neighbours are stored from the second bit from the `LSB`. By adding or subtracting `0x02` from the cell, we can change the number of alive neighbours.
+
+The next state of the cell is calculated using the following function:
+
+```go
+func (g *Game) NextGeneration() {
+    copy(g.NextWorld, g.World)
+    tempWorld := g.NextWorld
+
+    for idx := range g.World {
+        if tempWorld[idx] == 0 {
+            continue // skip dead cells
+        }
+
+        ...
+
+        // update the state of the cell
+        if tempWorld[idx] & 0x01 == 0x01 { // if the cell is alive
+            if aliveNeighbours < 2 || aliveNeighbours > 3 {
+                g.UpdateCell(x, y, false) // kill the cell
+            }
+        } else {
+            if aliveNeighbours == 3 { // if the cell is dead
+                g.UpdateCell(x, y, true) // make the cell alive
+            }
+        }
+    }
+}
+```
+
+We make a copy of the original world `World` to avoid updating the world while calculating the next generation. The dead cells are skipped to avoid unnecessary calculations.
+
+## Optimizing with Concurrency
+
+The code is already pretty fast compared to the basic implementation. But, we can make it even faster by using concurrency[^1]. We can use goroutines to calculate the number of alive neighbours for each cell in parallel. For the concurrency, we pass row(s) to the goroutines and perform the calculations for the next generation. Because, the number of rows can be very large to pass to individual goroutines, we pass a set of rows to each goroutine. The number of goroutines is set to the $\text{rows} / \text{n(cores)}$, where $\text{cores}$ is the number of cores in the CPU. To avoid jumping to the next generation with incomplete calculations, we use a wait group to wait for all the goroutines to finish their calculations.
+
+```go
+var wg sync.WorkGroup
+rowsPerWorker := g.Rows / runtime.NumCPU()
+
+...
+
+worker := func(startRow, endRow int) {
+    ...
+}
+
+for i := 0; i < numWorkers; i++ {
+	wg.Add(1)
+	....
+	if i == numWorkers - 1 {
+		endRow = w.height
+	}
+
+	go worker(startRow, endRow)
+}
+
+...
+
+wg.Wait()
+```
+
+But, this way Race Condition occurs, caused by multiple Goroutines trying to access the same memory location at the same time. This causes random behavior of the cells. To avoid this, we use a mutex lock to lock the memory location while accessing it.
+
+```go
+type Game struct {
+    ...
+    mu sync.Mutex
+}
+
+...
+
+func *g *Game) NextGeneration() {
+    ...
+    if liveNeghbours < 2 || liveNeighbours > 3 {
+        g.mu.Lock()
+        g.UpdateCell(x, y, false)
+        g.mu.Unlock()
+    }
+    ...
+}
+```
+
+## Conclusion
+
+The basic implementation is pretty slow. The optimization with a byte to represent the state of the cell and the number of alive neighbours is fast. The optimization with concurrency is even faster. The following table shows the speed of the different implementations based on the time taken to calculate the next generation for a world of size 512x512, 1024x1024 and 2048x2048.
+
+| Implementation                  | 512x512 | 1024x1024 | 2048x2048 |
+| :------------------------------ | :-----: | :-------: | :-------: |
+| Basic                           |   x1    |    x1     |    x1     |
+| Byte Data Type                  |   x85   |    x50    |    x79    |
+| Byte Data Type with Concurrency |  x179   |   x265    |   x320    |
+
+The GitHub repository for the code can be found in [tasnimzotder/artificial-life: A simple artificial life simulator](https://github.com/tasnimzotder/artificial-life)
+
+## References
+
+- Conway's Game of Life. (2023, November 30). In Wikipedia. https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
+- Abrash, M. (1997). Michael Abrash's Graphics Programming Black Book (Special Edition). Coriolis Group Books.
+- Gerrand, A. (2013, January 16). Concurrency is not parallelism. The Go Programming Language. https://go.dev/blog/waza-talk
+
+---
+
+[^1]: Concurrency is the ability of a program to break down into smaller parts that can be executed independently and simultaneously. Concurrency is not equivalent to parallelism.
