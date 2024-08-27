@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
-import {
-  Inter,
-  Nanum_Myeongjo,
-  Noto_Serif,
-  Source_Serif_4,
-} from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.scss";
 // import 'mermaid/dist/mermaid.css';
 import NavBar from "@/components/navbar/navbar";
 import Footer from "@/components/footer/footer";
 import ThemeProvider from "@/components/providers/theme_provider";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,7 +30,11 @@ export default function RootLayout({
           disableTransitionOnChange={true}
         >
           <NavBar />
-          <div className="mx-auto">{children}</div>
+          <div className="mx-auto">
+            {children}
+            <SpeedInsights />
+            <Analytics />
+          </div>
           <Footer />
         </ThemeProvider>
       </body>
