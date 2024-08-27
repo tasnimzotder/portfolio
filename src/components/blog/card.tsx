@@ -1,6 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
-import { PostFragment } from "@/generated/graphql";
 import { getFormattedDate } from "@/lib/utils/time.util";
 import { Post } from "@/lib/utils/mdx.util";
 
