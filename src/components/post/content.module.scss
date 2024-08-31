@@ -6,6 +6,11 @@
   font-size: 1.125rem;
   line-height: 1.5;
   margin-bottom: 2rem;
+  overflow-x: hidden;
+
+  table {
+    overflow-x: scroll;
+  }
 
   // heading styles
   h2 {
@@ -33,10 +38,10 @@
     margin-bottom: 1rem;
   }
 
+  // Image styling
   p {
     position: relative;
 
-    // Image styling
     img {
       max-width: 100%;
       height: auto;
@@ -67,7 +72,7 @@
   }
 
   blockquote {
-    background-color: #f9f9f9;
+    background-color: var(--background);
     border-left: 10px solid #ccc;
     margin: 1.5em 10px;
     padding: 0.5em 10px;
@@ -76,7 +81,7 @@
   ul {
     margin-bottom: 1rem;
     margin-left: 2rem;
-    margin-top: 2rem;
+    margin-top: 0.5rem;
 
     li {
       margin-bottom: 0.5rem;
@@ -85,13 +90,25 @@
   }
 
   ol {
-    margin-top: 2rem;
+    margin-top: 0.5rem;
     margin-bottom: 1rem;
     margin-left: 2rem;
 
     li {
       margin-bottom: 0.5rem;
       list-style-type: decimal;
+    }
+  }
+
+  a {
+    // blue color
+    // color: var(--link-color);
+    text-decoration: underline;
+    text-decoration-color: var(--link-color);
+
+    &:hover {
+      color: var(--link-hover-color);
+      // text-decoration: none;
     }
   }
 
@@ -112,17 +129,55 @@
     }
   }
 
-  // code (handle for both light and dark mode)
   code {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     padding: 0.125rem 0.25rem;
+    overflow-x: scroll;
 
-    // use tailwindcss color classes
-    // @apply bg-gray-300 dark:bg-gray-800;
-    @apply border border-gray-300 dark:border-gray-800 rounded-sm max-w-2xl mx-auto;
+    // // use tailwindcss color classes
+    // // @apply bg-gray-300 dark:bg-gray-800;
+    @apply border border-gray-300 dark:border-gray-800 rounded-sm max-w-2xl mx-auto dark:bg-gray-800;
+  }
+
+  code[data-theme*=" "],
+  code[data-theme*=" "] span {
+    color: var(--shiki-light);
+    background-color: var(--shiki-light-bg);
+  }
+
+  figure {
+    @media (prefers-color-scheme: dark) {
+      code[data-theme*=" "],
+      code[data-theme*=" "] span {
+        color: var(--shiki-dark);
+        background-color: var(--shiki-dark-bg);
+      }
+    }
+
+    figcaption {
+      font-size: 0.8rem;
+      text-align: right;
+      margin-top: 0.75rem;
+    }
   }
 
   pre {
-    @apply my-6;
+    code {
+      padding: 1rem;
+      font-size: 0.9rem;
+    }
+
+    // Styling: The line <span> receives a data-highlighted-line attribute that enables you to style via CSS.
+    code span[data-highlighted-line] {
+      // put a red border on the left side of the highlighted line; make the margin negative to overlap the border with the code block
+      border-left: 1rem solid rgba(0, 85, 255, 0.33);
+      margin-left: -1rem;
+      color: red;
+      // padding-left: 0.25rem;
+    }
+  }
+
+  pre {
+    @apply mb-6 mt-2;
   }
 }

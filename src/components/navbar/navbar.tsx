@@ -11,26 +11,26 @@ const NavBar = () => {
       <nav className="flex items-center space-x-4">
         <Link
           href="/"
-          className="text-muted-foreground hover:underline"
+          className="hover:underline"
           prefetch={true}
         >
           Home
         </Link>
         <Link
           href="/posts"
-          className="text-muted-foreground hover:underline"
+          className="hover:underline"
           prefetch={true}
         >
           Posts
         </Link>
         <Link
           href="https://github.com/tasnimzotder"
-          className="text-muted-foreground hover:underline"
+          className="hover:underline"
           prefetch={false}
           target="_blank"
           rel="noopener noreferrer"
         >
-          GitHub <FaCodeCommit className="inline-block" />
+          GitHub
         </Link>
 
         <SwitchTheme />

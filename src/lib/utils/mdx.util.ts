@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
 import { compileMDX } from "next-mdx-remote/rsc";
-import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
@@ -9,12 +8,24 @@ import rehypeKatex from "rehype-katex";
 import { UseMDXComponents } from "@/components/mdx/mdx-components";
 import { remarkMermaid } from "@theguild/remark-mermaid";
 import dynamic from "next/dynamic";
+import rehypePrettyCode, { Options } from "rehype-pretty-code";
+import { transformerCopyButton } from "@rehype-pretty/transformers";
+import readingTime from "reading-time";
+import { getSingletonHighlighter, Highlighter } from "shiki";
+import { bundledLanguages } from "shiki/langs";
 
 const Mermaid = dynamic(() => import("@/components/mdx/mermaid"), {
   ssr: false,
 });
 
 const contentSource: string = "src/content";
+
+async function getHighlighterInstance(): Promise<Highlighter> {
+  return getSingletonHighlighter({
+    themes: ["github-dark", "github-light"],
+    langs: Object.keys(bundledLanguages),
+  });
+}
 
 interface Frontmatter {
   id: number;
@@ -38,19 +49,45 @@ const getPostBySlug = async (slug: string) => {
 
   if (!fileName) {
     throw new Error(`No file found for slug: ${slug}`);
+    // TODO: redirect to 404 page
   }
 
   const source = fs.readFileSync(
     path.join(process.cwd(), contentSource, fileName),
-    "utf-8"
+    "utf-8",
   );
   const components = UseMDXComponents({});
+
+  const prettyCodeOptions: Options = {
+    getHighlighter: getHighlighterInstance,
+    theme: {
+      dark: "github-dark",
+      light: "github-light",
+    },
+    bypassInlineCode: true,
+    // theme: "github-dark",
+    grid: true,
+    defaultLang: {
+      block: "plaintext",
+      inline: "plaintext",
+    },
+    // transformers: [
+    //   transformerCopyButton({
+    //     visibility: "hover",
+    //     feedbackDuration: 3_000,
+    //   }),
+    // ],
+  };
 
   const { content, frontmatter } = await compileMDX({
     source,
     options: {
       mdxOptions: {
-        rehypePlugins: [rehypeHighlight, rehypeSlug, rehypeKatex],
+        rehypePlugins: [
+          rehypeSlug,
+          rehypeKatex,
+          [rehypePrettyCode, prettyCodeOptions],
+        ],
         remarkPlugins: [remarkGfm, remarkMath, remarkMermaid],
         remarkRehypeOptions: {},
       },
@@ -62,7 +99,13 @@ const getPostBySlug = async (slug: string) => {
     },
   });
 
-  return { content, frontmatter: frontmatter as unknown as Frontmatter };
+  const reading_time = readingTime(source);
+
+  return {
+    reading_time,
+    content,
+    frontmatter: frontmatter as unknown as Frontmatter,
+  };
 };
 
 // export function getAllPosts() {
@@ -76,7 +119,7 @@ const getAllPosts = () => {
       (file) =>
         !fs
           .lstatSync(path.join(process.cwd(), contentSource, file.toString()))
-          .isDirectory()
+          .isDirectory(),
     )
     .map((file) => ({
       slug: file.toString().replace(".mdx", "").split(".")[1],

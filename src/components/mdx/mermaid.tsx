@@ -10,7 +10,13 @@ interface MermaidProps {
 
 const Mermaid: React.FC<MermaidProps> = ({ chart }) => {
   useEffect(() => {
-    mermaid.initialize({ startOnLoad: true });
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "default",
+      fontFamily: "Inter, sans-serif",
+      securityLevel: "sandbox",
+      darkMode: true,
+    });
     mermaid.contentLoaded();
   }, [chart]);
 

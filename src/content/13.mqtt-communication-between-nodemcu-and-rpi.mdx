@@ -24,8 +24,12 @@ To establish a connection between a publisher and a subscriber, a broker is requ
 
 ## Workflow
 
+Send temperature data from NodeMCU to Raspberry Pi.
+
 ```mermaid
 sequenceDiagram
+    autonumber
+
     participant NodeMCU
     participant MQTT Broker
     participant Raspberry Pi
@@ -43,6 +47,24 @@ sequenceDiagram
         NodeMCU->>MQTT Broker: Publish temperature to test/data
         MQTT Broker->>Raspberry Pi: Forward temperature data
     end
+```
+
+Control LED from Raspberry Pi using MQTT.
+
+```mermaid
+sequenceDiagram
+    autonumber
+
+    participant NodeMCU
+    participant MQTT Broker
+    participant Raspberry Pi
+
+    Note over MQTT Broker: Mosquitto MQTT Broker
+
+    NodeMCU->>MQTT Broker: Connect
+    Raspberry Pi->>MQTT Broker: Connect
+    NodeMCU->>MQTT Broker: Subscribe to test/ctrl
+    Raspberry Pi->>MQTT Broker: Subscribe to test/data
 
     Raspberry Pi->>MQTT Broker: Publish LED control command to test/ctrl
     MQTT Broker->>NodeMCU: Forward LED control command
@@ -87,7 +109,7 @@ mosquitto -v
 
 If Mosquitto is installed successfully, you will see the following output:
 
-```bash
+```txt
 16xxxxxxxxx: mosquitto version X.X.X starting
 ...
 16xxxxxxxxx: Opening ipv4 listen socket on port 1883.
@@ -108,7 +130,7 @@ sudo nano /etc/mosquitto/mosquitto.conf
 
 Add the following lines to the configuration file:
 
-```bash
+```bash title="/etc/mosquitto/mosquitto.conf"
 listener 1883
 allow_anonymous true
 ```

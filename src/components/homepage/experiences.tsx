@@ -7,7 +7,7 @@ const Experiences: React.FC = () => {
   const experiencesData = GetExperiences();
 
   return (
-    <section className="container mx-auto px-4 py-20 md:py-32 w-2/5">
+    <section className="container mx-auto px-4 py-20 md:py-32 md:w-2/5 w-full sm:container">
       <div className="space-y-8">
         <div className="space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">Experiences</h2>
@@ -27,7 +27,7 @@ const Experiences: React.FC = () => {
                     width={50}
                     height={50}
                     className="rounded-full"
-                    layout="cover"
+                    // layout="cover"
                   />
                 </div>
                 <time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-100">

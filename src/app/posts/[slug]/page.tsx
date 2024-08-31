@@ -2,7 +2,7 @@ import { getAllPosts, getPostBySlug } from "@/lib/utils/mdx.util";
 import PostContent from "@/components/post/content";
 
 import "katex/dist/katex.min.css";
-import "highlight.js/styles/github.css";
+// import "highlight.js/styles/github.css";
 import PostHeader from "@/components/post/post_header";
 import { ResolvingMetadata, Metadata } from "next";
 
@@ -16,11 +16,13 @@ interface Params {
 }
 
 export default async function PostPage({ params }: Params) {
-  const { content, frontmatter } = await getPostBySlug(params.slug);
+  const { reading_time, content, frontmatter } = await getPostBySlug(
+    params.slug
+  );
 
   return (
     <div className="container max-w-4xl">
-      <PostHeader frontmatter={frontmatter} />
+      <PostHeader frontmatter={frontmatter} reading_time={reading_time.text} />
       <PostContent content={content} />
     </div>
   );
@@ -41,6 +43,7 @@ export async function generateMetadata(
     return {
       title: frontmatter.title,
       description: frontmatter.abstract,
+      applicationName: "Tasnim's Blog",
       openGraph: {
         title: frontmatter.title,
         description: frontmatter.abstract,
@@ -48,6 +51,7 @@ export async function generateMetadata(
         publishedTime: new Date(frontmatter.publishedOn).toISOString(),
         authors: ["Tasnim Zotder"],
         tags: frontmatter.tags,
+        siteName: "Tasnim's Blog",
         // TODO: Add image
       },
       twitter: {
@@ -55,6 +59,7 @@ export async function generateMetadata(
         site: "@tasnimzotder",
         title: frontmatter.title,
         description: frontmatter.abstract,
+        creator: "@tasnimzotder",
       },
     };
   } catch (error) {

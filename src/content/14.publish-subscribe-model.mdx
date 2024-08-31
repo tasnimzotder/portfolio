@@ -28,6 +28,23 @@ Message Queue Telemetry Transport ([MQTT](https://mqtt.org/)) is a publish/subsc
 
 ## Working of Pub/Sub
 
+```mermaid
+sequenceDiagram
+    autonumber
+
+    participant Publisher
+    participant Broker
+    participant Subscriber
+
+    note over Publisher, Subscriber: Decoupled
+
+    Publisher->>Broker: Publish message
+    Broker->>Subscriber: Deliver message
+    Subscriber->>Broker: Acknowledge message (optional)
+    Broker->>Publisher: Acknowledge message delivery (optional)
+
+```
+
 In Pub/Sub, the publisher publishes messages to a topic. Then the subscriber retrieves the messages from the topic. The following diagram shows the working of Pub/Sub.
 
 ![Pub/Sub without broker](/assets/posts/14/14-pub-sub-w-broker.webp "Pub/Sub without broker")

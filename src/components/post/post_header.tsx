@@ -1,8 +1,10 @@
 import { Frontmatter } from "@/lib/utils/mdx.util";
 import { Separator } from "../ui/separator";
+import { FaRegClock } from "react-icons/fa6";
 
 interface PostHeaderProps {
   frontmatter: Frontmatter;
+  reading_time: string;
 }
 
 const formatDate = (date: string) => {
@@ -21,19 +23,19 @@ export const PostHeader: React.FC<PostHeaderProps> = (props) => {
     <div className="my-5 mb-6 rounded-md">
       <h1 className="text-3xl mb-4">{props.frontmatter.title}</h1>
 
-      <div className="flex flex-row justify-between mt-2">
+      <div className="flex flex-row justify-center gap-6 mt-2">
         <div>
-          <span className="font-medium">Tasnim Zotder</span>
+          <span className="font-medium">
+            <FaRegClock className="inline" /> {props.reading_time}
+          </span>
         </div>
         {/* <Separator orientation="vertical" /> */}
         <div>
-          <time dateTime={published_on}>
-            Published On: {published_on}
-          </time>
+          <time dateTime={published_on}>Published On: {published_on}</time>
         </div>
       </div>
 
-      <hr className="mt-4" />
+      <Separator orientation="horizontal" className="mt-5" />
     </div>
   );
   // <>
