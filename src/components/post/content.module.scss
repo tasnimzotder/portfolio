@@ -136,7 +136,7 @@
 
     // // use tailwindcss color classes
     // // @apply bg-gray-300 dark:bg-gray-800;
-    @apply border border-gray-300 dark:border-gray-800 rounded-sm max-w-2xl mx-auto dark:bg-gray-800;
+    @apply border border-gray-300 dark:border-gray-800 rounded-sm dark:bg-gray-800;
   }
 
   code[data-theme*=" "],
@@ -159,6 +159,8 @@
       text-align: right;
       margin-top: 0.75rem;
     }
+
+    @apply max-w-2xl mx-auto;
   }
 
   pre {
