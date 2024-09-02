@@ -17,31 +17,6 @@ tags:
 
 WireGuard is a cutting-edge VPN protocol that gained popularity in recent years due to it's simplicity, speed, and security. It is a point-to-point VPN that can be used to create secure connections between two devices. In this tutorial, we will set up a WireGuard VPN server on a Raspberry Pi and connect to it from a phone or laptop to create a point-to-point VPN.
 
-## Workflow
-
-```mermaid
-sequenceDiagram
-  autonumber
-
-  participant Client as Client Device<br>(Phone or Laptop)
-  participant Server as WireGuard Server<br>(Raspberry Pi)
-
-  Note over Client, Server: VPN setup process
-  Client ->> Server: Generate and share public key
-  Server ->> Client: Generate and share public key
-
-  Note over Client, Server: Establish VPN tunnel
-  Client ->> Server: Initial VPN connection
-  Server -->> Client: Confirm connection (handshake)
-
-  Note over Client, Server: Secure communication
-  Client ->> Server: Send encrypted data
-  Server ->> Client: Receive and decrypt data
-
-  Server ->> Client: Send encrypted data
-  Client ->> Server: Receive and decrypt data
-```
-
 ## Prerequisites
 
 ### Hardware
@@ -55,10 +30,10 @@ sequenceDiagram
 
 ### Software
 
-- Raspberry Pi OS Lite orDesktop
+- Raspberry Pi OS Lite or Desktop
 - Wireguard client on the client device
 
-## Knowledge
+### Knowledge
 
 - Basic knowledge of Linux
 - Fundamental networking concepts (IP addresses, subnets, ports, etc.)
@@ -138,7 +113,7 @@ sudo wg show
 
 This command will show the WireGuard interface, the public key of the server, the private key of the server, and the listening port.
 
-```ansi title="Terminal"
+```ansi title="Output"
 interface: wg0
   public key: <SERVER_PUBLIC_KEY>
   private key: (hidden)
@@ -153,7 +128,7 @@ nmcli d
 
 This will show the devices managed by NetworkManager.
 
-```ansi {5} title="Terminal"
+```ansi {5} title="Output"
 DEVICE         TYPE       STATE                   CONNECTION
 wlan1          wifi       connected               Wi-Fi connection 1
 lo             loopback   connected (externally)  lo
@@ -240,7 +215,7 @@ ping -c 3 10.0.0.1
 
 This should show something like this:
 
-```ansi title="Terminal"
+```ansi title="Output"
 PING 10.0.0.1 (10.0.0.1): 56 data bytes
 64 bytes from 10.0.0.1: icmp_seq=0 ttl=64 time=8.444 ms
 64 bytes from 10.0.0.1: icmp_seq=1 ttl=64 time=11.057 ms
@@ -262,6 +237,31 @@ python3 -m http.server 8000
 ```
 
 Now, open a browser in the client and access the server using the IP address `10.0.0.1:8000`. If you see the directory listing, then the connection is successful.
+
+## Working of WireGuard
+
+```mermaid
+sequenceDiagram
+  autonumber
+
+  participant Client as Client Device<br>(Phone or Laptop)
+  participant Server as WireGuard Server<br>(Raspberry Pi)
+
+  Note over Client, Server: VPN setup process
+  Client ->> Server: Generate and share public key
+  Server ->> Client: Generate and share public key
+
+  Note over Client, Server: Establish VPN tunnel
+  Client ->> Server: Initial VPN connection
+  Server -->> Client: Confirm connection (handshake)
+
+  Note over Client, Server: Secure communication
+  Client ->> Server: Send encrypted data
+  Server ->> Server: Receive and decrypt data
+
+  Server ->> Client: Send encrypted data
+  Client ->> Client: Receive and decrypt data
+```
 
 ## Conclusion
 
