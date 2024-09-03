@@ -91,9 +91,9 @@ Here, replace `<SERVER_PRIVATE_KEY>` with the private key generated for the serv
 
 Before moving further, let's break down the configuration:
 
-- `Address`: This is the IP address of the server. Here, we are using a private IP range `10.0.0.0/24` for the WireGuard network.
-- `ListenPort`: This specifies the UDP port WireGuard will use. 51820 is default, but you can change it for additional security.
-- `PrivateKey`: This reads the private key from the file `/etc/wireguard/private.key`. This key is used to encrypt the communication between the server and the client.
+- **Interface.Address**: This is the IP address of the server. Here, we are using a private IP range `10.0.0.0/24` for the WireGuard network.
+- **Interface.ListenPort**: This specifies the UDP port WireGuard will use. `51820` is default, but you can change it for additional security.
+- **Interface.PrivateKey**: This reads the private key from the file `/etc/wireguard/private.key`. This key is used to encrypt the communication between the server and the client.
 
 > **Note**: The `10.0.0.1/24` address means this server will use `10.0.0.1` as its VPN IP, and can communicate with any IP in the range `10.0.0.1` to `10.0.0.254`.
 
@@ -173,11 +173,11 @@ Replace the placeholders:
 
 Here, the configuration is similar to the server configuration, but let's go though it:
 
-- `Address`: This sets the client's VPN IP. We're using `10.0.0.2` as an example.
-- `DNS`: These are the DNS server the client will use when the VPN is active.
-- `AllowedIPs`: This determines which traffic goes through the VPN. `10.0.0.0/24` means all traffic to the VPN subnet will use the tunnel. Multiple command separated IP ranges can be added here.
+- **Interface.Address**: This sets the client's VPN IP. We're using `10.0.0.2` as an example.
+- **Interface.DNS**: These are the DNS server the client will use when the VPN is active.
+- **Peer.AllowedIPs**: This determines which traffic goes through the VPN. `10.0.0.0/24` means all traffic to the VPN subnet will use the tunnel. Multiple command separated IP ranges can be added here.
 
-To route all internet traffic through the VPN, change `AllowedIPs` to `0.0.0.0/0`.
+To route all internet traffic through the VPN, change **Peer.AllowedIPs** to `0.0.0.0/0`.
 
 ### Start the Connection
 
@@ -269,6 +269,7 @@ Now, you have set up a basic WireGuard configuration for your home network. Now 
 
 ## References
 
-- WireGuard. WireGuard: Fast, modern, secure VPN tunnel. [https://www.wireguard.com/](https://www.wireguard.com/)
-- Install server - Pi-hole documentation. [https://docs.pi-hole.net/guides/vpn/wireguard/server/](https://docs.pi-hole.net/guides/vpn/wireguard/server/)
-- Wikipedia contributors. (2024, July 10). WireGuard. Wikipedia. [https://en.wikipedia.org/wiki/WireGuard](https://en.wikipedia.org/wiki/WireGuard)
+- WireGuard. WireGuard: Fast, modern, secure VPN tunnel. https://www.wireguard.com/
+- Install server - Pi-hole documentation. https://docs.pi-hole.net/guides/vpn/wireguard/server/
+- Wikipedia contributors. (2024, July 10). WireGuard. Wikipedia. https://en.wikipedia.org/wiki/WireGuard
+- Ludwig, B. J. (2020, November 10). WireGuard Point to point configuration. Pro Custodibus. https://www.procustodibus.com/blog/2020/11/wireguard-point-to-point-config/

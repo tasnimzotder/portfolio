@@ -44,6 +44,7 @@ export async function generateMetadata(
       title: frontmatter.title,
       description: frontmatter.abstract,
       applicationName: "Tasnim's Blog",
+      category: "technology",
       openGraph: {
         title: frontmatter.title,
         description: frontmatter.abstract,

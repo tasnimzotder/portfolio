@@ -21,7 +21,13 @@ export const PostHeader: React.FC<PostHeaderProps> = (props) => {
 
   return (
     <div className="my-5 mb-6 rounded-md">
-      <h1 className="text-3xl mb-4">{props.frontmatter.title}</h1>
+      <div className="mb-4">
+        <h1 className="text-3xl mb-5">{props.frontmatter.title}</h1>
+
+        <div>
+          <span>{props.frontmatter.abstract}</span>
+        </div>
+      </div>
 
       <div className="flex flex-row justify-center gap-6 mt-2">
         <div>
