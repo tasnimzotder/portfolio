@@ -1,5 +1,10 @@
 import Link from "next/link";
-import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa6";
+import {
+  FaGithub,
+  FaLinkedin,
+  FaTwitter,
+  FaStackOverflow,
+} from "react-icons/fa6";
 import { MdMail } from "react-icons/md";
 
 const Footer = () => {
@@ -22,6 +27,11 @@ const Footer = () => {
       name: "Twitter",
       url: "https://x.com/TasnimZotder",
       icon: <FaTwitter className={social_styles} />,
+    },
+    {
+      name: "Stack Overflow",
+      url: "https://stackoverflow.com/users/10416590/tasnim-zotder",
+      icon: <FaStackOverflow className={social_styles} />,
     },
     {
       name: "Email",
