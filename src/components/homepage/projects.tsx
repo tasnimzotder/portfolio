@@ -25,7 +25,7 @@ const Projects: React.FC = () => {
   projects = projects.filter((project) => project.display == true);
 
   return (
-    <section className="py-20 md:py-32">
+    <section className="py-10 md:py-10">
       <div className="container mx-auto px-4 max-w-5xl">
         <div className="space-y-8">
           <div className="space-y-2">
